@@ -1,0 +1,49 @@
+version: '2'
+services:
+  clickhouse:
+    image: docker.io/bitnami/clickhouse:22
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    volumes:
+      - clickhouse_data:/bitnami/clickhouse
+      - ${PWD}/clickhouse/rollup.xml:/etc/clickhouse-server/conf.d/rollup.xml
+      - ${PWD}/clickhouse/graphite.xml:/etc/clickhouse-server/conf.d/graphite.xml
+      - ${PWD}/clickhouse/dbinit.sh:/docker-entrypoint-startdb.d/dbinit.sh
+      - ${PWD}/clickhouse/schema.sql:/docker-entrypoint-startdb.d/schema.sql
+    networks:
+      - metrics
+  carbon-clickhouse-new:
+    image: ghcr.io/go-graphite/carbon-clickhouse:latest
+    volumes:
+      - ${PWD}/carbon-clickhouse/carbon-clickhouse-new.toml:/carbon-clickhouse.toml
+    ports:
+      - 2003:2003
+    command: carbon-clickhouse -config="/carbon-clickhouse.toml"
+    networks:
+      - metrics
+  graphite-clickhouse-new:
+    image: ghcr.io/go-graphite/graphite-clickhouse:latest
+    volumes:
+      - ${PWD}/graphite-clickhouse/graphite-clickhouse-new.toml:/graphite-clickhouse.toml
+    ports:
+      - '9081:9081'
+    command: graphite-clickhouse -config="/graphite-clickhouse.toml"
+    networks:
+      - metrics
+  carbonapi-new:
+    image: ghcr.io/go-graphite/carbonapi:latest
+    volumes:
+      - ${PWD}/carbonapi/carbonapi-new.yml:/etc/carbonapi.yml
+    ports:
+      - '8081:8081'
+    networks:
+      - metrics
+volumes:
+  clickhouse_data:
+    driver: local
+networks:
+  metrics:
+    driver: bridge
