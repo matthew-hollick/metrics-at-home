@@ -1,35 +1,35 @@
 [common]
 # Prefix for store all internal carbon-clickhouse graphs. Supported macroses: {host}
-metric-prefix = "carbon.agents.{host}"
+metric-prefix = "carbon-clickhouse-new.{host}"
 # Endpoint for store internal carbon metrics. Valid values: "" or "local", "tcp://host:port", "udp://host:port"
 metric-endpoint = "local"
 # Interval of storing internal metrics. Like CARBON_METRIC_INTERVAL
 metric-interval = "1m0s"
 # GOMAXPROCS
-max-cpu = 1
+max-cpu = 2
 
 [logging]
 # "stderr", "stdout" can be used as file name
 file = "stdout"
 # Logging error level. Valid values: "debug", "info", "warn" "error"
-level = "info"
+level = "debug"
 
 [data]
 path = "/tmp"
 chunk-interval = "1s"
-chunk-auto-interval = ""
+chunk-auto-interval = "5:10s,20:60s"
 
-[graphite_new.graphite]
+[upload.graphite]
 type = "points"
-table = "graphite"
-threads = 1
+table = "graphite_new.graphite"
+threads = 2
 url = "http://clickhouse:8123/"
 timeout = "30s"
 zero-timestamp = true
 
-[graphite_new.graphite_index]
+[upload.graphite_index]
 type = "index"
-table = "graphite_index"
+table = "graphite_new.graphite_index"
 threads = 1
 url = "http://clickhouse:8123/"
 timeout = "30s"
@@ -39,20 +39,6 @@ disable-daily-index = false
 [tcp]
 listen = ":2003"
 enabled = true
-drop-future = "0s"
-drop-past = "0s"
-drop-longer-than = 0
-
-[grpc]
-listen = ":2005"
-enabled = false
-drop-future = "0s"
-drop-past = "0s"
-drop-longer-than = 0
-
-[prometheus]
-listen = ":2006"
-enabled = false
 drop-future = "0s"
 drop-past = "0s"
 drop-longer-than = 0

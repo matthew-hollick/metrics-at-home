@@ -41,6 +41,14 @@ services:
       - '8081:8081'
     networks:
       - metrics
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ${PWD}/grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - '3000:3000'
+    networks:
+      - metrics
 volumes:
   clickhouse_data:
     driver: local
