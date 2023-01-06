@@ -10,7 +10,7 @@ tz: ""
 graphite:
     host: "carbon-clickhouse-old:2103"
     interval: "60s"
-    prefix: "carbonapi-new"
+    prefix: "carbonapi-new-old"
     pattern: "{prefix}.{fqdn}"
 
 #functionsConfig:
