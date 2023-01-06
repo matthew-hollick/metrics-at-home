@@ -6,7 +6,7 @@ max-cpu = 1
 url = "http://clickhouse:8123/?max_query_size=268435456&max_ast_elements=1000000&max_execution_time=52"
 data-table = "graphite_old.graphite"
 tree-table = "graphite_old.graphite_tree"
-rollup-conf = "auto"
+rollup-conf = "/rollup.xml"
 data-timeout = "1m0s"
 tree-timeout = "1m0s"
 connect-timeout = "1s"
@@ -20,7 +20,7 @@ total-timeout = "500ms"
 
 [[logging]]
 logger = "query"
-file = "/tmp/graphite-clickhouse.log"
+file = "stdout"
 level = "warn"
 encoding = "mixed"
 encoding-time = "iso8601"
@@ -28,7 +28,7 @@ encoding-duration = "seconds"
 
 [[logging]]
 logger = ""
-file = "/tmp/graphite-clickhouse.log"
+file = "stdout"
 level = "info"
 encoding = "mixed"
 encoding-time = "iso8601"

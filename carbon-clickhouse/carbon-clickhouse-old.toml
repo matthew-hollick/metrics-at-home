@@ -10,7 +10,7 @@ max-cpu = 2
 
 [logging]
 # "stderr", "stdout" can be used as file name
-file = "/tmp/carbon-clickhouse.log"
+file = "stdout"
 # Logging error level. Valid values: "debug", "info", "warn" "error"
 level = "warn"
 
@@ -29,7 +29,7 @@ chunk-auto-interval = "5:10s,20:60s"
 type = "points"
 table = "graphite_old.graphite"
 threads = 2
-url = "http://localhost:8123/"
+url = "http://clickhouse:8123/"
 timeout = "1m0s"
 
 [upload.graphite_tree]
@@ -38,7 +38,7 @@ table = "graphite_old.graphite_tree"
 # NOTE - vv not sure what this does vv
 date = "2016-11-01"
 threads = 2
-url = "http://localhost:8123/"
+url = "http://clickhouse:8123/"
 timeout = "1m0s"
 cache-ttl = "12h0m0s"
 
