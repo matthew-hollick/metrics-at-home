@@ -1,5 +1,5 @@
 [common]
-listen = ":9090"
+listen = ":9190"
 max-cpu = 1
 
 [clickhouse]

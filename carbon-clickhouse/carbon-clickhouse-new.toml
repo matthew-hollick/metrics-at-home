@@ -37,7 +37,7 @@ cache-ttl = "12h0m0s"
 disable-daily-index = false
 
 [tcp]
-listen = ":2003"
+listen = ":2203"
 enabled = true
 drop-future = "0s"
 drop-past = "0s"

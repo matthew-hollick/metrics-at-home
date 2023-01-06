@@ -1,27 +1,27 @@
 [common]
- listen = ":9091"
+ listen = ":9290"
  max-cpu = 1
- max-metrics-in-find-answer = 0
- max-metrics-per-target = 15000
- memory-return-interval = "0s"
- # additional request headers to log
- headers-to-log = []
+# max-metrics-in-find-answer = 0
+# max-metrics-per-target = 15000
+# memory-return-interval = "0s"
+# # additional request headers to log
+# headers-to-log = []
 
- # find cache config
- [common.find-cache]
-  type = "null"
-  size-mb = 0
-  default-timeout = 0
-  short-timeout = 0
-  find-timeout = 0
-  short-duration = "0s"
-  short-offset = 0
+# # find cache config
+# [common.find-cache]
+#  type = "null"
+#  size-mb = 0
+#  default-timeout = 0
+#  short-timeout = 0
+#  find-timeout = 0
+#  short-duration = "0s"
+#  short-offset = 0
 
-[metrics]
- metric-endpoint = "carbon-clickhouse-new:2003"
- # graphite metrics send interval
- metric-interval = "10s"
- metric-prefix = "graphite-clickhouse-new"
+#[metrics]
+# metric-endpoint = "carbon-clickhouse-new:2003"
+# # graphite metrics send interval
+# metric-interval = "10s"
+# metric-prefix = "graphite-clickhouse-new"
 
 
 [clickhouse]
@@ -29,8 +29,8 @@
  url = "http://clickhouse:8123/?cancel_http_readonly_queries_on_client_close=1&max_query_size=268435456&max_ast_elements=1000000&max_execution_time=52"
  # default total timeout to fetch data, can be overwritten with query-params
  data-timeout = "1m0s"
- # Date format (default, utc, both)
- date-format = ""
+# # Date format (default, utc, both)
+# date-format = ""
  # see doc/index-table.md
  index-table = "graphite_new.graphite_index"
  index-use-daily = true
@@ -39,11 +39,11 @@
 
  index-timeout = "1m0s"
  # 'tagged' table from carbon-clickhouse, required for seriesByTag
- tagged-table = "graphite_new.graphite_tagged"
- # or how long the daemon will query tags during autocomplete
- tagged-autocomplete-days = 7
- # whether to use date filter when searching for the metrics in the tagged-table
- tagged-use-daily = true
+# tagged-table = "graphite_new.graphite_tagged"
+# # or how long the daemon will query tags during autocomplete
+# tagged-autocomplete-days = 7
+# # whether to use date filter when searching for the metrics in the tagged-table
+# tagged-use-daily = true
 
  # costs for tags (for tune which tag will be used as primary), by default is 0, increase for costly (with poor selectivity) tags
  # [clickhouse.tagged-costs]
@@ -65,22 +65,22 @@
 [[data-table]]
  table = "graphite_new.graphite"
  reverse = false
- # maximum age stored in the table
- max-age = "0s"
- # minimum age stored in the table
- min-age = "0s"
- # maximum until-from interval allowed for the table
- max-interval = "0s"
- # minimum until-from interval allowed for the table
- min-interval = "0s"
- # table allowed only if any metrics in target matches regexp
- target-match-any = ""
- # table allowed only if all metrics in target matches regexp
- target-match-all = ""
- # custom rollup.xml file for table, 'auto' and 'none' are allowed as well
+# # maximum age stored in the table
+# max-age = "0s"
+# # minimum age stored in the table
+# min-age = "0s"
+# # maximum until-from interval allowed for the table
+# max-interval = "0s"
+# # minimum until-from interval allowed for the table
+# min-interval = "0s"
+# # table allowed only if any metrics in target matches regexp
+# target-match-any = ""
+# # table allowed only if all metrics in target matches regexp
+# target-match-all = ""
+# custom rollup.xml file for table, 'auto' and 'none' are allowed as well
  rollup-conf = "auto"
- # custom table for 'rollup-conf=auto', useful for Distributed or MatView
- rollup-auto-table = ""
+# # custom table for 'rollup-conf=auto', useful for Distributed or MatView
+# rollup-auto-table = ""
  # rollup update interval for 'rollup-conf=auto'
  rollup-auto-interval = "1m0s"
  # is used when none of rules match

@@ -15,12 +15,40 @@ services:
       - ${PWD}/clickhouse/schema.sql:/docker-entrypoint-startdb.d/schema.sql
     networks:
       - metrics
+
+  carbon-clickhouse-old:
+    image: ghcr.io/go-graphite/carbon-clickhouse:0.11.4
+    volumes:
+      - ${PWD}/carbon-clickhouse/carbon-clickhouse-old.toml:/carbon-clickhouse.toml
+    ports:
+      - '2103:2103'
+    command: carbon-clickhouse -config="/carbon-clickhouse.toml"
+    networks:
+      - metrics
+  graphite-clickhouse-old:
+    image: ghcr.io/go-graphite/graphite-clickhouse:0.13.3
+    volumes:
+      - ${PWD}/graphite-clickhouse/graphite-clickhouse-old.toml:/graphite-clickhouse.toml
+    ports:
+      - '9190:9190'
+    command: graphite-clickhouse -config="/graphite-clickhouse.toml"
+    networks:
+      - metrics
+  carbonapi-old:
+    image: gographite/carbonapi:v0.14.1
+    volumes:
+      - ${PWD}/carbonapi/carbonapi-old.yml:/etc/carbonapi.yml
+    ports:
+      - '8180:8180'
+    networks:
+      - metrics
+
   carbon-clickhouse-new:
     image: ghcr.io/go-graphite/carbon-clickhouse:latest
     volumes:
       - ${PWD}/carbon-clickhouse/carbon-clickhouse-new.toml:/carbon-clickhouse.toml
     ports:
-      - 2003:2003
+      - '2203:2203'
     command: carbon-clickhouse -config="/carbon-clickhouse.toml"
     networks:
       - metrics
@@ -29,7 +57,7 @@ services:
     volumes:
       - ${PWD}/graphite-clickhouse/graphite-clickhouse-new.toml:/graphite-clickhouse.toml
     ports:
-      - '9081:9081'
+      - '9290:9290'
     command: graphite-clickhouse -config="/graphite-clickhouse.toml"
     networks:
       - metrics
@@ -38,9 +66,19 @@ services:
     volumes:
       - ${PWD}/carbonapi/carbonapi-new.yml:/etc/carbonapi.yml
     ports:
-      - '8081:8081'
+      - '8280:8280'
     networks:
       - metrics
+
+  carbonapi-new-old:
+    image: gographite/carbonapi:v0.14.1
+    volumes:
+      - ${PWD}/carbonapi/carbonapi-new-old.yml:/etc/carbonapi.yml
+    ports:
+      - '8380:8380'
+    networks:
+      - metrics
+
   grafana:
     image: grafana/grafana:latest
     volumes:
@@ -49,9 +87,11 @@ services:
       - '3000:3000'
     networks:
       - metrics
+
 volumes:
   clickhouse_data:
     driver: local
+
 networks:
   metrics:
     driver: bridge
