@@ -1,0 +1,5 @@
+apiVersion: 1
+datasources:
+  - name: standard
+    type: graphite
+    url: http://carbonapi:8080

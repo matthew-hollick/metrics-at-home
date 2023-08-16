@@ -1,0 +1,137 @@
+version: '2'
+services:
+  clickhouse:
+    image: docker.io/bitnami/clickhouse:23
+    hostname: clickhouse
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    volumes:
+      - clickhouse_data:/bitnami/clickhouse
+      - ${PWD}/clickhouse/rollup.xml:/etc/clickhouse-server/conf.d/rollup.xml
+      - ${PWD}/clickhouse/graphite.xml:/etc/clickhouse-server/conf.d/graphite.xml
+      - ${PWD}/clickhouse/dbinit.sh:/docker-entrypoint-startdb.d/dbinit.sh
+      - ${PWD}/clickhouse/schema.sql:/docker-entrypoint-startdb.d/schema.sql
+    networks:
+      - metrics
+
+#  haggar-old:
+#    image: haggar
+#    command: -agents 1 -carbon carbon-clickhouse-old:2103 -metrics 100
+#    build:
+#      context: ./haggar
+#    networks:
+#      - metrics
+#
+#  haggar-new:
+#    image: haggar
+#    command: -agents 1 -carbon carbon-clickhouse-new:2203 -metrics 100
+#    networks:
+#      - metrics
+#
+#  carbon-clickhouse-old:
+#    image: lomik/carbon-clickhouse:latest
+#    volumes:
+#      - ${PWD}/carbon-clickhouse/carbon-clickhouse-old.toml:/carbon-clickhouse.toml
+#      - ${PWD}/clickhouse/rollup.xml:/rollup.xml
+#    ports:
+#      - '2103:2103'
+#    depends_on:
+#      - "clickhouse"
+#    command: carbon-clickhouse -config="/carbon-clickhouse.toml"
+#    networks:
+#      - metrics
+#  graphite-clickhouse-old:
+#    image: lomik/graphite-clickhouse:v0.12.0
+#    volumes:
+#      - ${PWD}/graphite-clickhouse/graphite-clickhouse-old.toml:/graphite-clickhouse.toml
+#      - ${PWD}/clickhouse/rollup.xml:/rollup.xml
+#    ports:
+#      - '9190:9190'
+#    depends_on:
+#      - "clickhouse"
+#    command: graphite-clickhouse -config="/graphite-clickhouse.toml"
+#    networks:
+#      - metrics
+#  carbonapi-old:
+#    image: gographite/carbonapi:v0.14.1
+#    volumes:
+#      - ${PWD}/carbonapi/carbonapi-old.yml:/etc/carbonapi.yml
+#    ports:
+#      - '8180:8180'
+#    depends_on:
+#      - "graphite-clickhouse-old"
+#    networks:
+#      - metrics
+
+  carbon-clickhouse:
+    image: ghcr.io/go-graphite/carbon-clickhouse:latest
+    volumes:
+      - ${PWD}/carbon-clickhouse/carbon-clickhouse.toml:/carbon-clickhouse.toml
+      - ${PWD}/clickhouse/rollup.xml:/rollup.xml
+    ports:
+      - '2003:2003'
+    depends_on:
+      - "clickhouse"
+    command: carbon-clickhouse -config="/carbon-clickhouse.toml"
+    networks:
+      - metrics
+  graphite-clickhouse:
+    image: ghcr.io/go-graphite/graphite-clickhouse:latest
+    volumes:
+      - ${PWD}/graphite-clickhouse/graphite-clickhouse.toml:/graphite-clickhouse.toml
+      - ${PWD}/clickhouse/rollup.xml:/rollup.xml
+    ports:
+      - '9090:9090'
+    depends_on:
+      - "clickhouse"
+    command: graphite-clickhouse -config="/graphite-clickhouse.toml"
+    networks:
+      - metrics
+  carbonapi:
+    image: ghcr.io/go-graphite/carbonapi:latest
+    volumes:
+      - ${PWD}/carbonapi/carbonapi.yml:/etc/carbonapi.yml
+    ports:
+      - '8080:8080'
+    depends_on:
+      - "graphite-clickhouse"
+    networks:
+      - metrics
+
+#  carbonapi-new-old:
+#    image: gographite/carbonapi:v0.14.1
+#    volumes:
+#      - ${PWD}/carbonapi/carbonapi-new-old.yml:/etc/carbonapi.yml
+#    ports:
+#      - '8380:8380'
+#    depends_on:
+#      - "graphite-clickhouse-new"
+#      - "graphite-clickhouse-old"
+#    networks:
+#      - metrics
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - ${PWD}/grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - '3000:3000'
+    depends_on:
+      - "carbonapi"
+    networks:
+      - metrics
+
+volumes:
+  clickhouse_data:
+    driver: local
+
+networks:
+  metrics:
+    driver: bridge
