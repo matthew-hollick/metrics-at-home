@@ -1,0 +1,31 @@
+version: '3'
+
+tasks:
+  build:
+    deps:
+      - diagram
+    cmds:
+      - docker-compose build
+    silent: true
+  kill:
+    cmds:
+      - docker-compose kill
+    silent: true
+  start:
+    deps:
+      - kill
+      - build
+    cmds:
+      - docker-compose start
+    silent: true
+  nuke:
+    cmds:
+      - docker-compose down -v --rmi all
+    silent: true 
+  ps:
+    cmds:
+      - docker-compose ps
+    silent: true
+  diagram:
+    cmds:
+      - dot -Tpng diagram.dot > diagram.png 
